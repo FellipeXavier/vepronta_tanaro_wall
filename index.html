@@ -1,28 +1,49 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <title>VePronta AR - Tanaro</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.aframe.io/1.4.1/aframe.min.js"></script>
+    
+    <script src="https://apps.8thwall.com/xrweb?appKey=SUA_CHAVE_AQUI"></script>
 
-  <title>Empty Project</title>
-  <meta itemprop="name" content="Empty Project">
-  <meta name="twitter:title" content="Empty Project">
-  <meta property="og:title" content="Empty Project">
-  <meta property="og:site_name" content="Empty Project">
-  <meta name="description" content="Start with a blank project.">
-  <meta itemprop="description" content="Start with a blank project.">
-  <meta property="og:description" content="Start with a blank project.">
-  <meta name="twitter:description" content="Start with a blank project.">
-  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
-  <script crossorigin="anonymous" src="./external/xr/xr.js" async="true" data-preload-chunks="face, slam">
-  </script>
+    <script>
+      // Lógica para detectar quando a imagem for encontrada
+      AFRAME.registerComponent('rastreador-vepronta', {
+        init: function () {
+          this.el.addEventListener('model-loaded', () => {
+            console.log("Modelo Tanaro carregado com sucesso!");
+          });
+        }
+      });
+    </script>
+  </head>
 
-</head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene
+      xrweb="allowedDevices: any; worldTracking: true"
+      xrextras-gesture-detector
+      xrextras-almost-there
+      xrextras-loading
+      xrextras-runtime-error>
 
-<body>
-<script src="bundle.js"></script>
+      <a-assets>
+        <a-asset-item id="modelo-tanaro" src="assets/tanaro.glb"></a-asset-item>
+        
+        <img id="marcador-augin" src="assets/augin.jpg">
+      </a-assets>
 
-</body>
+      <a-entity camera position="0 8 8" raycaster="objects: .cantap" cursor="fuse: false; rayOrigin: mouse;"></a-entity>
 
+      <a-entity xrextras-named-image-target="name: assets/augin.jpg">
+        <a-entity 
+          gltf-model="#modelo-tanaro" 
+          scale="1 1 1" 
+          rastreador-vepronta>
+        </a-entity>
+      </a-entity>
+
+    </a-scene>
+  </body>
 </html>

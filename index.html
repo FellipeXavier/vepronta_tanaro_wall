@@ -6,14 +6,14 @@
 
     <script src="https://cdn.aframe.io/1.4.1/aframe.min.js"></script>
     
-    <script src="https://apps.8thwall.com/xrweb?appKey=SUA_CHAVE_AQUI"></script>
+    <script src="xr.js"></script>
 
     <script>
-      // Lógica para detectar quando a imagem for encontrada
+      // Componente para avisar no console quando o móvel carregar
       AFRAME.registerComponent('rastreador-vepronta', {
         init: function () {
           this.el.addEventListener('model-loaded', () => {
-            console.log("Modelo Tanaro carregado com sucesso!");
+            console.log("Modelo Tanaro (170m-210m) carregado com sucesso!");
           });
         }
       });
@@ -22,7 +22,7 @@
 
   <body style="margin: 0; overflow: hidden;">
     <a-scene
-      xrweb="allowedDevices: any; worldTracking: true"
+      xrweb="allowedDevices: any; worldTracking: true; preloadChunks: slam"
       xrextras-gesture-detector
       xrextras-almost-there
       xrextras-loading
@@ -40,6 +40,7 @@
         <a-entity 
           gltf-model="#modelo-tanaro" 
           scale="1 1 1" 
+          position="0 0 0"
           rastreador-vepronta>
         </a-entity>
       </a-entity>

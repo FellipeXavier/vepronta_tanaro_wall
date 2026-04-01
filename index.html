@@ -2,28 +2,60 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>VePronta AR - Estável</title>
+    <title>VePronta AR - Versão Obra</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
+    <script>
+      // COMPONENTE DE ANCORAGEM DEFINITIVA
+      AFRAME.registerComponent('fixar-na-obra', {
+        init: function () {
+          var model = this.el;
+          var marker = this.el.parentNode;
+          var scene = document.querySelector('a-scene');
+          var jaFixou = false;
+
+          marker.addEventListener('markerFound', function () {
+            if (!jaFixou) {
+              // Pega a posição exata onde o papel Hiro está no chão
+              var position = new THREE.Vector3();
+              var rotation = new THREE.Quaternion();
+              var scale = new THREE.Vector3();
+              
+              model.object3D.getWorldPosition(position);
+              model.object3D.getWorldQuaternion(rotation);
+              model.object3D.getWorldScale(scale);
+
+              // Tira o modelo de dentro do marcador e joga no "mundo real"
+              scene.appendChild(model);
+              model.object3D.position.copy(position);
+              model.object3D.quaternion.copy(rotation);
+              model.object3D.scale.copy(scale);
+
+              jaFixou = true; 
+              console.log("Imóvel ancorado! Pode tirar o papel.");
+            }
+          });
+        }
+      });
+    </script>
   </head>
 
   <body style="margin: 0px; overflow: hidden;">
-    <a-scene 
-      embedded 
-      vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
-
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false;">
+      
       <a-assets>
-        <a-asset-item id="modelo-tanaro" src="assets/tanaro.glb" timeout="10000"></a-asset-item>
+        <a-asset-item id="modelo-tanaro" src="assets/tanaro.glb"></a-asset-item>
       </a-assets>
 
       <a-marker preset="hiro">
         <a-entity 
+          id="casa-tanaro"
           gltf-model="#modelo-tanaro" 
-          scale="0.05 0.05 0.05" 
+          scale="1 1 1" 
           position="0 0 0" 
-          rotation="-90 0 0">
+          rotation="-90 0 0"
+          fixar-na-obra>
         </a-entity>
       </a-marker>
 

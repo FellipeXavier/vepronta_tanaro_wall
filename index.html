@@ -2,64 +2,46 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>VePronta AR - Versão Obra</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <title>VePronta AR - Estabilidade Total</title>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    
-    <script>
-      // COMPONENTE DE ANCORAGEM DEFINITIVA
-      AFRAME.registerComponent('fixar-na-obra', {
-        init: function () {
-          var model = this.el;
-          var marker = this.el.parentNode;
-          var scene = document.querySelector('a-scene');
-          var jaFixou = false;
-
-          marker.addEventListener('markerFound', function () {
-            if (!jaFixou) {
-              // Pega a posição exata onde o papel Hiro está no chão
-              var position = new THREE.Vector3();
-              var rotation = new THREE.Quaternion();
-              var scale = new THREE.Vector3();
-              
-              model.object3D.getWorldPosition(position);
-              model.object3D.getWorldQuaternion(rotation);
-              model.object3D.getWorldScale(scale);
-
-              // Tira o modelo de dentro do marcador e joga no "mundo real"
-              scene.appendChild(model);
-              model.object3D.position.copy(position);
-              model.object3D.quaternion.copy(rotation);
-              model.object3D.scale.copy(scale);
-
-              jaFixou = true; 
-              console.log("Imóvel ancorado! Pode tirar o papel.");
-            }
-          });
-        }
-      });
-    </script>
   </head>
 
-  <body style="margin: 0px; overflow: hidden;">
-    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false;">
-      
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene 
+      embedded 
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; smooth: true; smoothCount: 10; smoothTolerance: 0.01; smoothThreshold: 5;">
+
       <a-assets>
         <a-asset-item id="modelo-tanaro" src="assets/tanaro.glb"></a-asset-item>
       </a-assets>
 
-      <a-marker preset="hiro">
+      <a-marker id="marcador-obra" preset="hiro">
+        
         <a-entity 
-          id="casa-tanaro"
+          id="modelo-entidade"
           gltf-model="#modelo-tanaro" 
-          scale="1 1 1" 
+          scale="10 10 10" 
           position="0 0 0" 
-          rotation="-90 0 0"
-          fixar-na-obra>
+          rotation="-90 0 0">
         </a-entity>
+
       </a-marker>
 
       <a-entity camera></a-entity>
     </a-scene>
+
+    <script>
+      // Função para impedir o objeto de sumir
+      const marker = document.querySelector('#marcador-obra');
+      const entity = document.querySelector('#modelo-entidade');
+
+      marker.addEventListener('markerLost', function() {
+        // Quando o papel some, nós forçamos a visibilidade a continuar ligada
+        entity.setAttribute('visible', true);
+        console.log("Mantendo o imóvel visível na obra...");
+      });
+    </script>
   </body>
 </html>
